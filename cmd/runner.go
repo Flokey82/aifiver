@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/Flokey82/go_gens/aifiver"
 	"log"
+
+	"github.com/Flokey82/go_gens/aifiver"
 )
 
 func main() {
