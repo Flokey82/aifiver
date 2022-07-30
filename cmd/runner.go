@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/Flokey82/go_gens/aifiver"
+	"github.com/Flokey82/aifiver"
 )
 
 func main() {
