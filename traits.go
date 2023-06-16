@@ -1,5 +1,7 @@
 package aifiver
 
+import "log"
+
 // Trait represents a character trait that influences behavior and decisions.
 type Trait struct {
 	Type          TraitType
@@ -18,6 +20,11 @@ func NewTrait(name string, t TraitType, cond func(p *Personality) bool) *Trait {
 		Stats:         NewStats(),
 		IsExpressedBy: cond,
 	}
+}
+
+// Log logs the trait.
+func (t *Trait) Log() {
+	log.Println(t.Name)
 }
 
 // MarkOppositeTraits defines two traits as their polar opposite.

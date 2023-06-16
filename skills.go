@@ -28,8 +28,8 @@ var skillToString = map[Skill]string{
 }
 
 // String implements the stringer function for a skill.
-func (s *Skill) String() string {
-	if str, ok := skillToString[*s]; ok {
+func (s Skill) String() string {
+	if str, ok := skillToString[s]; ok {
 		return str
 	}
 	return "unknown"

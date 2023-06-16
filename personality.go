@@ -30,6 +30,15 @@ func NewPersonalityFromPreset(t *Traiter, ps map[Facet]int) *Personality {
 	return p
 }
 
+// NewPersonalityRandomized returns a new personality with random facet values.
+// TODO: Allow custom rand source or seed.
+func NewPersonalityRandomized(t *Traiter) *Personality {
+	p := NewPersonality(t)
+	p.BigModel = *RandomBig()
+	p.Rebuild()
+	return p
+}
+
 // Rebuild re-evaluates expressed traits based on the facet ratings.
 func (p *Personality) Rebuild() {
 	p.Expressed = nil
@@ -38,6 +47,27 @@ func (p *Personality) Rebuild() {
 			p.addTrait(t)
 		}
 	}
+}
+
+// Log logs the personality.
+func (p *Personality) Log() {
+	p.BigModel.Log()
+	for _, t := range p.Expressed {
+		t.Log()
+	}
+}
+
+// Stats returns the stats for the personality.
+func (p *Personality) Stats() *Stats {
+	// Rebuild the traits.
+	p.Rebuild()
+
+	// Calculate the stats.
+	s := NewStats()
+	for _, t := range p.Expressed {
+		s.add(t.Stats)
+	}
+	return s
 }
 
 // addTrait adds the given traits to the personality.
