@@ -74,3 +74,35 @@ func (p *Personality) Stats() *Stats {
 func (p *Personality) addTrait(tt ...*Trait) {
 	p.Expressed = mergeTraitSets(p.Expressed, tt)
 }
+
+// Interaction returns a value for how well the personalities interact face to face.
+func (p *Personality) Interaction(b *Personality) int {
+	return Compatibility(p, b)
+}
+
+// Opinion returns the opinion of the other personality based on their reputation.
+// TODO: What about a misperception of the other person?
+func (p *Personality) Opinion(b *Personality) int {
+	var base int
+
+	// Now check if any of our traits modify the compatibility.
+	for _, t := range p.Expressed {
+		if t.Stats.Opinion[TOpinionSame] != 0 && b.hasTrait(t) {
+			base += t.Stats.Opinion[TOpinionSame]
+		} else if t.Stats.Opinion[TOpinionOpposite] != 0 && b.hasTrait(t.Opposite) {
+			base += t.Stats.Opinion[TOpinionOpposite]
+		}
+	}
+
+	// TODO: Add attraction opinion modifiers?
+	return base
+}
+
+func (p *Personality) hasTrait(t *Trait) bool {
+	for _, tt := range p.Expressed {
+		if tt == t {
+			return true
+		}
+	}
+	return false
+}

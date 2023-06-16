@@ -39,10 +39,10 @@ type Fate int
 
 const (
 	TFateEarlyDeath      Fate = iota // Early death
-	TFateCapture                     // Capture in battle
-	TFateDeath                       // Death in battle
+	TFateCaptureInBattle             // Capture in battle
+	TFateDeathInBattle               // Death in battle
 	TFateAccident                    // Accidental injury
-	TFateInvestment                  // Bad investment
+	TFateBadInvestment               // Bad investment
 	TFateSchemeFallacy               // Scheme fallacy
 	TFateSchemeDiscovery             // Scheme discovery
 )
@@ -52,13 +52,13 @@ func (f Fate) String() string {
 	switch f {
 	case TFateEarlyDeath:
 		return "early death"
-	case TFateCapture:
+	case TFateCaptureInBattle:
 		return "capture"
-	case TFateDeath:
+	case TFateDeathInBattle:
 		return "death"
 	case TFateAccident:
 		return "accident"
-	case TFateInvestment:
+	case TFateBadInvestment:
 		return "investment"
 	case TFateSchemeFallacy:
 		return "scheme fallacy"
