@@ -4,13 +4,12 @@ package aifiver
 // expressed traits.
 type Personality struct {
 	t         *Traiter // Traiter reference for re-evaluating the expressed traits
-	BigModel           // The model which influences which traits are expressed
+	BigModel           // The model which influences which traits are expressed.
 	Expressed []*Trait // Traits expressed based on the underlying 5 factor model.
-	// TODO: Calculate compatibility with other personalities
 	// TODO: Proneness to fall victim to cetain fates (accidental death, falling victim to intrigue)
-	// TODO: Traits as expression of facets (Cruel, Sadistic, Diplomatic, ...)
-	// TODO: Temporary facet modifiers (Griefing, Recent Betrayal, Setback, ...)
-	// Modifiers []*Modifier
+	Modifiers []*Modifier // Temporary facet modifiers (Griefing, Recent Betrayal, Setback, ...)
+	// TODO: Add a factor of how much the modifiers affect the personality...
+	// Over time this should deminish and eventually disappear.
 }
 
 // NewPersonality returns a new, pretty boring personality.
@@ -37,6 +36,65 @@ func NewPersonalityRandomized(t *Traiter) *Personality {
 	p.BigModel = *RandomBig()
 	p.Rebuild()
 	return p
+}
+
+// AddModifier adds a modifier to the personality (if it is not already present).
+func (p *Personality) AddModifier(m *Modifier) {
+	for _, mod := range p.Modifiers {
+		if mod == m {
+			return
+		}
+	}
+	p.Modifiers = append(p.Modifiers, m)
+	p.Rebuild()
+}
+
+// RemoveModifier removes a modifier from the personality (if it is present).
+func (p *Personality) RemoveModifier(m *Modifier) {
+	for i, mod := range p.Modifiers {
+		if mod == m {
+			p.Modifiers = append(p.Modifiers[:i], p.Modifiers[i+1:]...)
+			p.Rebuild()
+			return
+		}
+	}
+}
+
+// Get implements the Model interface and applies any modifiers to the base value.
+func (p *Personality) Get(f Factor) int {
+	base := p.BigModel.Get(f)
+	if len(p.Modifiers) == 0 {
+		return base
+	}
+
+	// Apply the modifiers.
+	for _, m := range p.Modifiers {
+		base += m.Factors[f]
+	}
+	return clampTo10(base)
+}
+
+// GetFacet implements the Model interface and applies any modifiers to the base value.
+func (p *Personality) GetFacet(f Facet) int {
+	base := p.BigModel.GetFacet(f)
+	if len(p.Modifiers) == 0 {
+		return base
+	}
+
+	// Apply the modifiers.
+	for _, m := range p.Modifiers {
+		base += m.Facets[f]
+	}
+	return clampTo10(base)
+}
+
+func clampTo10(val int) int {
+	if val > 10 {
+		return 10
+	} else if val < -10 {
+		return -10
+	}
+	return val
 }
 
 // Rebuild re-evaluates expressed traits based on the facet ratings.
